@@ -12,6 +12,22 @@
         -->
         <Platforms>x64;ARM64;X86</Platforms>
         <UseWinUI>true</UseWinUI>
+        <!--
+            WindowsPackageType=None produces an UNPACKAGED app: no Package.appxmanifest,
+            no MSIX identity. That keeps first-run simple — F5 works from any folder with
+            no MSIX tooling, no certificate, and no deployment step.
+
+            Tradeoff, because it is not obvious at the point of use: without package
+            identity the app cannot use identity-scoped WinRT APIs. The most commonly hit
+            are ApplicationData.Current (LocalSettings / LocalFolder / RoamingSettings),
+            toast notifications, background tasks, and share/launch contracts — all of
+            which throw or return null in an unpackaged process. Use Environment
+            .GetFolderPath(SpecialFolder.LocalApplicationData) for settings instead, or
+            make the app packaged.
+
+            To ship packaged: remove this property, add a Package.appxmanifest, and set
+            <EnableMsixTooling>true</EnableMsixTooling>.
+        -->
         <WindowsPackageType>None</WindowsPackageType>
         <!--
             WindowsAppSDKSelfContained bundles the Windows App SDK runtime alongside the
